@@ -5,6 +5,7 @@ $(document).ready(function(){
   console.log("JQ");
 getTables();
 getEmployees();
+
 });
 var createEmployee = function(){
   console.log( 'in createEmployee' );
@@ -90,20 +91,21 @@ var listTables = function(){
   // loop through the tables array and display each table
 
   // select to assign a server to this table
-  var selectText = '<select>';
+  var selectText = '<select class="dropdown">';
   for (var i = 0; i < employees.length; i++) {
-    selectText+= '<option value=' + i + '>'+ employees[i].first_name + ' ' + employees[i].last_name + '</option>';
+    selectText+= '<option class="drowdownoption" value=' + (i+1) + '>'+ employees[i].first_name + ' ' + employees[i].last_name + '</option>';
   }
   selectText += '</select>';
   // display employees
   for( i=0; i< tables.length; i++ ){
     // status is a button that, when clicked runs cycleStatus for this table
-    var line = tables[i].name + " - capacity: " + tables[i].capacity + ', server: ' + selectText + ', status: <button onClick="cycleStatus(' + i + ')">' + tables[i].status + "</button>";
+    var line = tables[i].name + " - capacity: " + tables[i].capacity + ', server: ' + selectText + '   status: <button onClick="cycleStatus(' + i + ')">' + tables[i].status + "</button>";
     // add line to output div
     document.getElementById('tablesOutput').innerHTML += '<p>' + line + '</p>';
   }
 
 };
+
 
  // end listTables
 
@@ -166,9 +168,7 @@ function sendStatus(status){
 console.log(status);
 var gift = {
     status: status.status,
-    id:status.id
-    };
-
+    id:status.id};
 $.ajax({
   type:'PUT',
   url:'/putstatus',
@@ -177,4 +177,9 @@ $.ajax({
     console.log(response, 'yo');
   }
 });
+}
+function assignEmployee(selTag){
+  console.log('AAAAAAAHHHH');
+  var x = selTag.options[selTag.selectedIndex].text;
+  console.log(document.getElementsByClassName('dropdownoption').value);
 }
