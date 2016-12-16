@@ -48,16 +48,20 @@ var cycleStatus = function( index ){
   switch( tables[index].status ){
     case  'empty':
         tables[index].status = 'seated';
+        sendStatus(tables[index]);
         break;
     case  'seated':
         tables[index].status = 'served';
+        sendStatus(tables[index]);
         break;
     case  'served':
         tables[index].status = 'dirty';
+        sendStatus(tables[index]);
         break;
     case  'dirty':
 
       tables[index].status = 'empty';
+      sendStatus(tables[index]);
       break;
   }
   // show tables on DOM
@@ -156,4 +160,21 @@ function getEmployees(){
       }
     }
   });
+}
+
+function sendStatus(status){
+console.log(status);
+var gift = {
+    status: status.status,
+    id:status.id
+    };
+
+$.ajax({
+  type:'PUT',
+  url:'/putstatus',
+  data:gift,
+  success:function(response){
+    console.log(response, 'yo');
+  }
+});
 }

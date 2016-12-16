@@ -88,3 +88,16 @@ app.get('/getemployees', function(req, res){
     }
   });
 });
+
+app.put('/putstatus', urlEncodedParser, function(req, res){
+  console.log("updating...", req.body);
+  pg.connect(connectionString, function (err, client, done){
+    if (err){
+      console.log("AAAAAAAHHHHHH");
+    } else {
+      var query = client.query('UPDATE seating SET (status) = ($1) WHERE id = ($2)', [req.body.status, req.body.id]);
+      done();
+      res.send("cool runnings");
+    }
+  });
+});
