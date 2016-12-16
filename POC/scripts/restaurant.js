@@ -1,7 +1,11 @@
 // arrays
 var tables=[];
 var employees=[];
-
+$(document).ready(function(){
+  console.log("JQ");
+getTables();
+getEmployees();
+});
 var createEmployee = function(){
   console.log( 'in createEmployee' );
   // get user input
@@ -13,7 +17,8 @@ var createEmployee = function(){
     lastName : employeeLastName
   }; // end object
   // push into employees array
-  employees.push( newEmployee );
+  sendEmployee( newEmployee );
+  getEmployees();
   // update display
   listEmployees();
 }; // end createEmployee
@@ -31,10 +36,10 @@ var createTable = function(){
     'status': 'empty'
   };
   // push new obejct into tables array
-  tables.push( newTable );
+  sendTable( newTable );
   console.log( 'added table: ' + newTable.name );
+  getTables();
   // update output
-  listTables();
 }; // end createTable
 
 var cycleStatus = function( index ){
@@ -64,7 +69,7 @@ var listEmployees = function(){
   document.getElementById('employeesOutput').innerHTML = '<ul>';
   // loop through the tables array and display each table
   for( i=0; i< employees.length; i++ ){
-    var line = employees[i].firstName + " " + employees[i].lastName + ', id: ' + i;
+    var line = employees[i].first_name + " " + employees[i].last_name + ', id: ' + i;
     // add line to output div
     document.getElementById('employeesOutput').innerHTML += '<li>' + line + '</li>';
   }
@@ -76,13 +81,14 @@ var listEmployees = function(){
 var listTables = function(){
   console.log( "in listTables" );
   // target our output div
+
   document.getElementById('tablesOutput').innerHTML = '';
   // loop through the tables array and display each table
 
   // select to assign a server to this table
   var selectText = '<select>';
   for (var i = 0; i < employees.length; i++) {
-    selectText+= '<option value=' + i + '>'+ employees[i].firstName + ' ' + employees[i].lastName + '</option>';
+    selectText+= '<option value=' + i + '>'+ employees[i].first_name + ' ' + employees[i].last_name + '</option>';
   }
   selectText += '</select>';
   // display employees
@@ -92,4 +98,62 @@ var listTables = function(){
     // add line to output div
     document.getElementById('tablesOutput').innerHTML += '<p>' + line + '</p>';
   }
-}; // end listTables
+
+};
+
+ // end listTables
+
+
+function sendEmployee(sending){
+console.log('sending employee...');
+$.ajax({
+  type:'POST',
+  url:'/addemployee',
+  data: sending,
+  success:function(response){
+    console.log('success!', response);
+  }
+});
+}
+function sendTable(sending){
+console.log('sending table...');
+$.ajax({
+  type:'POST',
+  url:'/addtable',
+  data: sending,
+  success:function(response){
+    console.log('Table success!', response);
+  }
+});
+}
+
+function getTables(){
+  console.log('Getting Tabeees...');
+  $.ajax({
+    type:'GET',
+    url:'/gettables',
+    success: function(response){
+      console.log('I got', response);
+      tables = [];
+      for (var i = 0; i < response.length; i++) {
+        tables.push(response[i]);
+        listTables();
+      }
+    }
+  });
+}
+function getEmployees(){
+  console.log("Who up?");
+  $.ajax({
+    type:'GET',
+    url:'/getemployees',
+    success:function(response){
+      console.log("heres", response);
+      employees = [];
+      for (var i = 0; i < response.length; i++) {
+        employees.push(response[i]);
+      listEmployees();
+      }
+    }
+  });
+}
